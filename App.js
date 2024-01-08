@@ -68,11 +68,11 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    // display: 'flex',
+    display: 'flex',
     backgroundColor: '#fff',
     justifyContent: 'center',
     paddingTop: 20,
     alignItems: 'center',
-    width: 100
   },
 });
+
