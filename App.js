@@ -50,26 +50,29 @@ export default function App() {
      tokenCache={tokenCache}
      publishableKey={'pk_test_YWNjZXB0ZWQtamF3ZmlzaC0xNS5jbGVyay5hY2NvdW50cy5kZXYk'}
     >
-        <SignedIn>
-          <NavigationContainer>
-            <TabNavigation />
-          </NavigationContainer>
-        </SignedIn>
+      <View style={styles.container} onLayout={onLayoutRootView}>
         <SignedOut>
           <LoginScreen />
         </SignedOut>
+      </View>
+      <SignedIn>
+          <NavigationContainer>
+            <TabNavigation />
+          </NavigationContainer>
+      </SignedIn>
 
-        <StatusBar style='auto' />
+      <StatusBar style='auto' />
     </ClerkProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
+    // display: 'flex',
     backgroundColor: '#fff',
     justifyContent: 'center',
     paddingTop: 20,
     alignItems: 'center',
+    width: 100
   },
 });
