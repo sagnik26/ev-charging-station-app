@@ -1,109 +1,78 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import { useCallback } from 'react';
-import LoginScreen from './App/Screen/LoginScreen/LoginScreen';
-import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import TabNavigation from './App/Navigations/TabNavigation';
-import * as SecureStore from "expo-secure-store";
-import * as Location from 'expo-location';
-import { useState, useEffect } from 'react';
-import { UserLocationContext } from './App/Context/UserLocationContext';
-
-SplashScreen.preventAutoHideAsync();
-
-const tokenCache = {
-  async getToken(key) {
-    try {
-      return SecureStore.getItemAsync(key);
-    } catch (err) {
-      return null;
-    }
-  },
-  async saveToken(key, value) {
-    try {
-      return SecureStore.setItemAsync(key, value);
-    } catch (err) {
-      return;
-    }
-  },
-};
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import ManageExpense from './App/screens/ManageExpense/ManageExpense';
+import RecentExpenses from './App/screens/RecentExpenses/RecentExpenses';
+import AllExpenses from './App/screens/AllExpenses/AllExpenses';
+import { GlobalStyles } from './constants/styles';
+import { AntDesign } from '@expo/vector-icons';
+import { Octicons } from '@expo/vector-icons';
 
 export default function App() {
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+  const Stack = createNativeStackNavigator();
+  const BottomTabs = createBottomTabNavigator();
 
-  const [fontsLoaded] = useFonts({
-    'outfit': require('./assets/fonts/Outfit-Regular.ttf'),
-    'outfit-medium': require('./assets/fonts/Outfit-SemiBold.ttf'),
-    'outfit-bold': require('./assets/fonts/Outfit-Bold.ttf'),
-  });
-
-  useEffect(() => {
-    (async () => {
-      
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-      
-      let location = await Location.getCurrentPositionAsync({});
-      console.log('CORR', location);
-      setLocation(location.coords);
-    })();
-  }, []);
-
-  let text = 'Waiting..';
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
+  function ExpensesOverview() {
+    return (
+      <BottomTabs.Navigator 
+        screenOptions={{
+          headerStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+          headerTintColor: 'white',
+          tabBarStyle: { backgroundColor: GlobalStyles.colors.primary500 },
+         tabBarActiveTintColor: GlobalStyles.colors.accent500
+        }}
+      >
+        <BottomTabs.Screen 
+          name='RecentExpenses' 
+          component={RecentExpenses} 
+          options={{
+            title: 'Recent Expenses',
+            tabBarLabel: 'Recent Expenses',
+            tabBarIcon: ({ color, size }) => (
+              <Octicons name="report" size={size} color={color} />
+            )
+          }}
+        />
+        <BottomTabs.Screen 
+          name='AllExpenses' 
+          component={AllExpenses} 
+          options={{
+            title: 'All Expenses',
+            tabBarLabel: 'All Expenses',
+            tabBarIcon: ({ color, size }) => (
+              <AntDesign name="calendar" size={size} color={color} />
+            )
+          }}
+        />
+      </BottomTabs.Navigator>
+    )
   }
 
   return (
-    <ClerkProvider
-     tokenCache={tokenCache}
-     publishableKey={'pk_test_YWNjZXB0ZWQtamF3ZmlzaC0xNS5jbGVyay5hY2NvdW50cy5kZXYk'}
-    >
-      <UserLocationContext.Provider
-      value={{ location, setLocation }}>
-        <View style={styles.container} onLayout={onLayoutRootView}>
-          <SignedOut>
-            <LoginScreen />
-          </SignedOut>
-        </View>
-        <SignedIn>
-            <NavigationContainer>
-              <TabNavigation />
-            </NavigationContainer>
-        </SignedIn>
-
-        <StatusBar style='auto' />
-      </UserLocationContext.Provider>
-    </ClerkProvider>
+    <>
+      <StatusBar style='auto' />
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name='ExpensesOverview' component={ExpensesOverview} 
+            options={{
+              headerShown: false
+            }} 
+          />
+          <Stack.Screen name='ManageExpenses' component={ManageExpense} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
+    flex: 1,
     backgroundColor: '#fff',
-    justifyContent: 'center',
-    paddingTop: 20,
     alignItems: 'center',
+    justifyContent: 'center'
   },
 });
 
