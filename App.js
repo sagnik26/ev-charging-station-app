@@ -11,6 +11,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Iconbutton from './util/iconbutton';
+import ExpensesContextProvider from './store/expenses-context';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -60,30 +61,32 @@ export default function App() {
   return (
     <>
       <StatusBar style='auto' />
-      <NavigationContainer>
-        <Stack.Navigator 
-          screenOptions={{
-            headerStyle: {
-              backgroundColor: GlobalStyles.colors.primary500
-            },
-            headerTintColor: 'white'
-          }}
-        >
-          <Stack.Screen name='ExpensesOverview' component={ExpensesOverview} 
-            options={{
-              headerShown: false
-            }} 
-          />
-          <Stack.Screen 
-            name='ManageExpenses' 
-            component={ManageExpense} 
-            options={{
-              title: 'Manage Expense',
-              presentation: 'modal'
+      <ExpensesContextProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: GlobalStyles.colors.primary500
+              },
+              headerTintColor: 'white'
             }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+          >
+            <Stack.Screen name='ExpensesOverview' component={ExpensesOverview}
+              options={{
+                headerShown: false
+              }}
+            />
+            <Stack.Screen
+              name='ManageExpenses'
+              component={ManageExpense}
+              options={{
+                title: 'Manage Expense',
+                presentation: 'modal'
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ExpensesContextProvider>
     </>
   );
 }
