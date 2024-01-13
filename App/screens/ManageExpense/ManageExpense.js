@@ -1,12 +1,14 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useContext} from 'react'
 import { View, StyleSheet } from 'react-native'
 import { Entypo } from '@expo/vector-icons';
 import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../../components/UI/Button';
+import { ExpensesContext } from '../../../store/expenses-context';
 
 const ManageExpense = ({route, navigation}) => {
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
+  const expenseContext = useContext(ExpensesContext);
 
   useEffect(() => {
     navigation.setOptions({ 
@@ -16,6 +18,7 @@ const ManageExpense = ({route, navigation}) => {
 
   const deleteExpenseHandler = () => {
     navigation.goBack();
+    expenseContext.deleteExpense(editedExpenseId);
   }
 
   const cancelHandler = () => {
@@ -23,6 +26,22 @@ const ManageExpense = ({route, navigation}) => {
   }
   
   const confirmHandler = () => {
+    if(isEditing) {
+      expenseContext.updateExpense(editedExpenseId,{
+        description: 'XXyyyyyyy',
+        amount: 89700.8789,
+        date: new Date('2024-01-11')
+      });
+    }
+    else {
+      expenseContext.addExpense({
+        id: '199',
+        description: 'XX',
+        amount: 89700.87,
+        date: new Date('2024-01-12')
+      });
+    }
+
     navigation.goBack();
   }
 
