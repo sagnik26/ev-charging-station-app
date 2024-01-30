@@ -4,11 +4,15 @@ import { Entypo } from '@expo/vector-icons';
 import { GlobalStyles } from '../../../constants/styles';
 import Button from '../../../components/UI/Button';
 import { ExpensesContext } from '../../../store/expenses-context';
+import ExpenseForm from '../../../components/ManageExpense/ExpenseForm';
 
 const ManageExpense = ({route, navigation}) => {
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
   const expenseContext = useContext(ExpensesContext);
+  const selectedExpense = expenseContext.expenses.find(
+    (expense) => expense.id === editedExpenseId
+  );
 
   useEffect(() => {
     navigation.setOptions({ 
@@ -25,21 +29,12 @@ const ManageExpense = ({route, navigation}) => {
     navigation.goBack();
   }
   
-  const confirmHandler = () => {
+  const confirmHandler = (expenseData) => {
     if(isEditing) {
-      expenseContext.updateExpense(editedExpenseId,{
-        description: 'XXyyyyyyy',
-        amount: 89700.8789,
-        date: new Date('2024-01-11')
-      });
+      expenseContext.updateExpense(editedExpenseId, expenseData);
     }
     else {
-      expenseContext.addExpense({
-        id: '199',
-        description: 'XX',
-        amount: 89700.87,
-        date: new Date('2024-01-12')
-      });
+      expenseContext.addExpense(expenseData);
     }
 
     navigation.goBack();
@@ -47,14 +42,12 @@ const ManageExpense = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.buttons}>
-        <Button style={styles.button} mode='flat' onPress={cancelHandler}>Cancel</Button>
-        <Button style={styles.button} onPress={confirmHandler}>
-          {
-            isEditing ? 'Update' : 'Add'
-          }
-        </Button>
-      </View>
+      <ExpenseForm 
+        onCancel={cancelHandler} 
+        onSubmit={confirmHandler}
+        submitButtonLabel={isEditing ? 'Update' : 'Add'}
+        defaultValues={selectedExpense}
+      />
       {isEditing && 
       <View style={styles.deleteContainer}>
         <Entypo 

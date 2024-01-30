@@ -1,12 +1,7 @@
 import { createContext, useReducer } from "react";
 import { DUMMY_EXPENSES } from "../constants/dummyExpenses";
 
-export const ExpensesContext = createContext({
-    expenses: [],
-    addExpense: ({ description, amount, date }) => {},
-    deleteExpense: (id) => {},
-    updateExpense: (id, { description, amount, date }) => {}
-});
+export const ExpensesContext = createContext();
 
 function expensesReducer(state, action) {
     switch (action.type) {
