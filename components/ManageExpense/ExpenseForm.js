@@ -29,6 +29,7 @@ function ExpenseForm({ onCancel, onSubmit, submitButtonLabel, defaultValues }) {
         })
     }
 
+    // Function to execute on Submit input form
     function submitHandler() {
         const expenseData = {
             amount: +inputValues.amount.value,
