@@ -2,9 +2,9 @@ import React, {useEffect, useContext} from 'react'
 import { View, StyleSheet } from 'react-native'
 import { Entypo } from '@expo/vector-icons';
 import { GlobalStyles } from '../../../constants/styles';
-import Button from '../../../components/UI/Button';
 import { ExpensesContext } from '../../../store/expenses-context';
 import ExpenseForm from '../../../components/ManageExpense/ExpenseForm';
+import { storeExpense, deleteExpense, updateExpenseItem } from '../../../util/http';
 
 const ManageExpense = ({route, navigation}) => {
   const editedExpenseId = route.params?.expenseId;
@@ -20,21 +20,24 @@ const ManageExpense = ({route, navigation}) => {
     })
   }, [isEditing]);
 
-  const deleteExpenseHandler = () => {
-    navigation.goBack();
+  const deleteExpenseHandler = async () => {
+    await deleteExpense(editedExpenseId);
     expenseContext.deleteExpense(editedExpenseId);
+    navigation.goBack();
   }
 
   const cancelHandler = () => {
     navigation.goBack();
   }
   
-  const confirmHandler = (expenseData) => {
+  const confirmHandler = async (expenseData) => {
     if(isEditing) {
+      await updateExpenseItem(editedExpenseId, expenseData);
       expenseContext.updateExpense(editedExpenseId, expenseData);
     }
     else {
-      expenseContext.addExpense(expenseData);
+      const id = await storeExpense(expenseData);
+      expenseContext.addExpense({...expenseData, id: id});
     }
 
     navigation.goBack();
