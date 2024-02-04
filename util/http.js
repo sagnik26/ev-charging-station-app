@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Alert } from 'react-native';
 
 const BASE_URL = 'https://react-native-expense-tra-42563-default-rtdb.firebaseio.com'
 
